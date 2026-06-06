@@ -6,15 +6,10 @@ Tat ca thay doi code duoc ghi nhan tai day. Theo Semantic Versioning (MAJOR.MINO
 
 ## [2.2.1] - 2026-06-06
 
-### SET
-- Cap nhat code
-
----
-
-## [2.2.1] - 2026-06-06
-
 ### REFACTOR
-- Toi gian UI settings: xoa Region/Console button khoi YouTube API tab, xoa hint/label thua khoi VidIQ tab, xoa subtitle khoi Proxy tab.
+- Them co che auto-version bat buoc voi pre-commit hook va bump_version.py
+- Tang cuong .cursorrules voi quy tac Auto-Version Upgrade bat buoc
+- Toi gian UI settings: xoa Region/Console button khoi YouTube API tab, xoa hint/label thua khoi VidIQ tab, xoa subtitle khoi Proxy tab
 
 ---
 

@@ -92,7 +92,7 @@ def update_app_config(major: int, minor: int, patch: int):
     print(f"  [OK] app_config.py: VERSION = {version_str}")
 
 
-def update_update_json(major: int, minor: int, patch: int):
+def update_update_json(major: int, minor: int, patch: int, changelog_msg: str = ""):
     version_str = f"{major}.{minor}.{patch}"
     with open(UPDATE_JSON, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -102,6 +102,30 @@ def update_update_json(major: int, minor: int, patch: int):
     # Luon giu lai truong sha256 neu co
     if "sha256" not in data:
         data["sha256"] = ""
+
+    # Cap nhat changelog neu co message
+    if changelog_msg:
+        data["changelog"] = changelog_msg
+    elif os.path.exists(CHANGELOG):
+        # Doc tu CHANGELOG.md entry dau tien
+        try:
+            with open(CHANGELOG, "r", encoding="utf-8") as f:
+                content = f.read()
+            # Tim entry dau tien
+            match = re.search(r'## \[[\d.]+\].*?\n(.*?)(?=\n---\n|\n## \[)', content, re.DOTALL)
+            if match:
+                lines = match.group(1).strip().split("\n")
+                summary = []
+                for line in lines:
+                    line = re.sub(r'^### \w+\s*', '', line)
+                    line = re.sub(r'^\s*[-*]\s*', '', line)
+                    line = line.strip()
+                    if line:
+                        summary.append(line)
+                if summary:
+                    data["changelog"] = "; ".join(summary[:3])
+        except Exception:
+            pass
 
     with open(UPDATE_JSON, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
@@ -179,7 +203,7 @@ def main():
         print("")
 
         update_app_config(major, minor, patch)
-        update_update_json(major, minor, patch)
+        update_update_json(major, minor, patch, level)
         update_changelog(major, minor, patch, level)
 
         print("")
