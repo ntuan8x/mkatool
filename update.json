@@ -1,6 +1,5 @@
 {
   "latest_version": "2.2.0",
-  "google_file_id": "1h6jxauNO03uYR8SgBseVJc4pCeEbjU4I",
-  "changelog": "Them kiem tra license bat buoc. Dong goi PyQt6 hoan chinh.",
-  "sha256": "511EF35AC40A5F6D3FEA16C0B9D07EDED9FED1004864F263BC7D6972256E28A2"
+  "google_file_id": "1NxpJUazjcNw_OcSG1Ug_RycZjqz1lImQ",
+  "changelog": "Fix loi update checker, cai tien giao dien va nhieu tinh nang moi."
 }
