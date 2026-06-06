@@ -1,0 +1,159 @@
+---
+description: 
+alwaysApply: true
+---
+
+---
+description: 
+alwaysApply: true
+---
+
+# ==============================================================================
+# CURSOR SYSTEM RULES & ARCHITECTURE GUIDELINES
+# ==============================================================================
+
+## 1. Core Principles & Code Architecture (Architecture Principles)
+- **Absolutely do not centralize code into a single, oversized file.** If any file tends to exceed **700 lines of code**, the Agent MUST proactively propose and execute a refactor, moving functions or classes sharing the same feature set into a separate module/file.
+- **Mandatory decomposition rules based on code nature (Even if the file is under 700 lines):** The Agent MUST proactively propose splitting files/modules immediately upon detecting any of the following design violations, regardless of file length:
+    *   *Single Responsibility Principle (SRP) Violation:* A single file contains functions/classes handling entirely different business domains (e.g., a file containing both User management logic and Email sending or Data formatting logic).
+    *   *Mixing Architectural Layers:* Mixing user interface logic (UI Components) with API data fetching, or mixing presentation logic with complex business logic calculations.
+    *   *Abstraction Level Mismatch:* A file or function contains high-level orchestration logic mixed with too many low-level implementation details (e.g., writing complex loops or mathematical algorithms directly in-place instead of extracting them into helper functions).
+    *   *Configuration/Definition Overload:* Data type definitions (`type`, `interface`) or constants (`constants`, `config`) occupy more than 30% of the file length. These must be extracted into dedicated `.types` or `.constants` files.
+- **Absolutely do not hardcode configuration values, language lists, UI text, or system setup parameters directly into module code files.** All configuration must be moved to `config/settings.json`. The UI and Core modules will read configurations from this JSON file via a `ConfigManager` class.
+- **High Cohesion:** Functions or logic that are similar or complementary to one another must be grouped into a specialized module (specific folder or file), avoiding scattering them across the project.
+- **DRY (Don't Repeat Yourself) Principle:** When creating a new feature with logic similar to an existing one, or if a helper/logic function tends to be reused in a second file, it must be extracted into a shared `utils/` or `helpers/` directory for reusability or extension. Never duplicate code.
+
+
+## 2. Directory Structure & Module Classification
+When creating new files or reorganizing the project, strictly adhere to the following one-way modular structure:
+- `/ui` or `/views`: Contains only UI rendering code. Absolutely no heavy calculations or complex API calls allowed directly here.
+- `/core` or `/modules`: Contains core feature logic (e.g., subtitle processing, video processing, data synchronization), divided into small files by functionality.
+- `/services` or `/api`: Contains modules for API calls, webhooks, or third-party system integrations.
+- `/utils` or `/helpers`: Contains independent, shared utility functions (string formatting, file parsing, time calculations, logging).
+- `/config` or `/state`: Contains system configurations or centralized state management modules for shared use. Do not declare global variables randomly.
+
+
+## 3. Multi-File Management & Import Rules
+- **Absolutely prevent Circular Imports.** Dependency flow between files must be strictly one-way: `UI -> Services -> Core -> Utils` (Higher levels call lower levels; lower levels are strictly forbidden from importing higher levels).
+- If two modules at the same level need to share logic, the Agent MUST extract that logic into a third file located in the `/utils` directory or a shared module.
+- **Path Standardization:** Maintain a consistent import syntax throughout the project (Prioritize clean relative imports like `from .module import ...` or absolute imports relative to the root directory consistently).
+- Use `__init__.py` (or Index files depending on the language) to encapsulate and expose the main functions of a directory, making import syntax cleaner elsewhere.
+
+
+## 4. Cursor Agent Workflow Rules
+1. **Plan First:** Before writing a new feature or modifying existing code, the Agent must scan the directory structure. If it detects that the architecture is about to be broken, a file is getting too long, or any decomposition rule in Section 1 is violated, the Agent MUST briefly explain the reason and outline a file-splitting plan in `Plan` mode before execution.
+2. **Context Awareness:** When working with a multi-file system, the Agent must always verify function definitions in related files before making calls, avoiding incorrect function names or arguments.
+3. **Auto-Debugging:** During module decomposition, the Agent must automatically check syntax, fix missing imports, or resolve asynchronous issues (`async/await`) before reporting completion.
+
+### 4.1. Token Overflow Mitigation (Long Data / Terminal Logs)
+- When a user submits a very long Terminal Log or large file (which easily overflows the AI's Context Window), the Agent **MUST NOT** attempt to read or scan the entire raw text from beginning to end.
+- Instead, the Agent must proactively skip non-essential setup information (e.g., pip installation logs, AI model download logs) and focus on searching for keywords like `Error`, `Exception`, or the final lines of the `Traceback` to pinpoint the root cause.
+- If a module loading conflict is suspected (e.g., initializing Qt/GUI before `QApplication`), the Agent must check indirectly via the bootstrap file structure and `requirements.txt` instead of asking the user to re-run and fetch logs.
+
+### 4.2. Silent Auto-Fix & Complete Code Output
+- **Automation over explanation:** Upon detecting structural logic flaws or import errors in the code, the Agent **MUST automatically apply the fix** and immediately provide the fully completed code. Minimize open-ended questions, multi-choice dilemmas, or lengthy theoretical explanations.
+- **Full File Output:** When fixing or refactoring a file, if the file is reasonably short (under 300 lines), the Agent should output the entire corrected file content cleanly for easy copying (Copy-Paste), avoiding fragmented code snippets that cause line placement confusion.
+
+### 4.3. Strict Rules Against Token Overflow and Chinese Language Display Bugs
+- **PROHIBITED from reading entire large files:** Absolutely DO NOT use file-reading tools (`view_file`, `read_file`...) to load the full content of files longer than 200 lines (especially UI layout files like `widgets.py`, `panels.py`, `sidebar.py`).
+- **Enforced Range-based Reading:** If it is mandatory to inspect code inside a large file, the Agent MUST use line-range reading (e.g., reading only lines 1 to 50 at the suspected error area). Never load multiple files simultaneously in a single response turn.
+- **Smart Troubleshooting over Blind Scanning:** When encountering GUI/Qt system crashes (`STATUS_STACK_BUFFER_OVERRUN` or `QWidget: Must construct a QApplication...`), the Agent MUST NOT randomly scan UI files. Instead, fix it directly in the entry file (`run.py`) by forcing the `QApplication` initialization to the very first line of the `main()` function.
+- **Halt Terminal Log Loops:** When the Terminal generates excessive logs (e.g., package installation logs, model downloads), the Agent MUST NOT read through them. Proactively ignore them and focus on the last 5 lines of the `Traceback`. If the data remains too long, the Agent must instruct the user to clear the Terminal before proceeding, preventing heavy chat streams that trigger Chinese UI rendering errors (`输入内容过长`).
+
+
+## 5. Language & Response Rules
+- **Always respond in Vietnamese:** All answers, explanations, documentation, and plan analyses from the Agent must be written in natural, clear Vietnamese.
+- **Retain Technical Terms:** For technical terminology, code syntax, function names, or system errors (e.g., *Circular Import, Traceback, Class, Async/Await, Token, State, Interface, SRP...*), keep them in English to avoid ambiguity during debugging.
+- **Code Comments:** When generating new code or writing docstrings, explanatory comments regarding the purpose or logic of functions inside the code must also use Vietnamese.
+
+
+## 6. Multi-Agent Coordination Rules
+- **Scope Boundary adherence:** Agents are only permitted to modify files within their assigned scope in the Prompt (e.g., a UI Agent only modifies files in `/ui`, and must not modify core logic files in `/core` unless explicitly instructed).
+- **Interface Contract Respect:** When an Agent needs to change how functions are called between files (API/Interface), that Agent MUST clearly document the changes so the user can inform other Agents, preventing system flow breakage.
+- **Structural Synchronization:** Every Agent creating a new file or refactoring must strictly comply with the directory structure and the one-way import principle defined above.
+
+
+## 7. Auto-Version Upgrade Rules (BAT BUOC TUYET DOI)
+
+**CANH CAO: Day la quy tac BAT BUOC, khong phai huong dan. AI phai tuan theo TINH MACH moi khi chinh sua code.**
+
+### 7.1 Khi nao phai tang version
+
+**Bat buoc tang version TRONG CUNG LAN CHAT ngay khi hoan tat bat ky chinh sua nao:**
+- Tao file moi
+- Sua chuc nang / tinh nang
+- Fix bug / loi
+- Refactor code
+- Xoa / bo code
+- Thay doi UI bat ky muc nao
+
+**Nguong nhan dien:** Neu co bat ky thay doi nao toi code (them, sua, xoa), phai tang version.
+
+### 7.2 Quy tac tang version
+
+| Loai thay doi | Tang thanh |
+|---|---|
+| Fix nho, loi typing, xoa comment, loc loi | `PATCH` (x.x.**PATCH**) |
+| Them tinh nang moi tuong thich nguoc | `MINOR` (x.**MINOR**.x) |
+| Break change, khong tuong thich nguoc | `MAJOR` (**MAJOR**.x.x) |
+
+### 7.3 File phai cap nhat (đung thu tu)
+
+Moi khi tang version, **bat buoc** cap nhat **TAT CA** cac file sau trong cung mot lan:
+
+1. **`src/config/app_config.py`** — dong VERSION:
+   ```python
+   VERSION = "x.x.x"
+   VERSION_MAJOR = x
+   VERSION_MINOR = x
+   VERSION_PATCH = x
+   ```
+
+2. **`update.json`** — truong `latest_version`:
+   ```json
+   "latest_version": "x.x.x"
+   ```
+
+3. **`CHANGELOG.md`** — ghi o dau file:
+   ```markdown
+   ## [x.x.x] - YYYY-MM-DD
+
+   ### [MODULE-NAME]
+   - [FIX/ADD/REFACTOR] Mo ta thay doi
+   ```
+
+### 7.4 Thu tu thuc hien bat buoc
+
+Sau khi hoan tat chinh sua code, **bat buoc** thuc hien theo thu tu:
+
+```
+1. Xac dinh loai thay doi (PATCH/MINOR/MAJOR)
+2. Tinh version moi = version cu + 1 theo loai
+3. Cap nhat src/config/app_config.py (VERSION + cac thanh phan)
+4. Cap nhat update.json (latest_version)
+5. Cap nhat CHANGELOG.md (ghi dau changelog)
+6. Thong bao version moi cho nguoi dung
+```
+
+### 7.5 Kiem tra truoc khi bao cao hoan tat
+
+**TRUOC KHI noi "Hoan tat" hoac "Xong", AI phai xac nhan:**
+
+```
+[VERSION CHECK]
+- src/config/app_config.py: VERSION = "x.x.x"  [OK/FAIL]
+- update.json: latest_version = "x.x.x"         [OK/FAIL]
+- CHANGELOG.md: Da ghi entry moi                  [OK/FAIL]
+```
+
+Neu bat ky muc nao chua duoc cap nhat, **phai cap nhat ngay** truoc khi ket thuc.
+
+### 7.6 Chi tang mot lan
+
+Neu nhieu thay doi trong 1 turn chat, chi tang version **mot lan** o cuoi cung. Khong tang nhieu lan trong cung mot session.
+
+### 7.7 Khong tang version khi nao
+
+- Chinh sua file `.md`, `.txt`, `.json` (khong phai code)
+- Chinh sua comment, docstring, hay chi thay doi whitespace
+- Chay test, debug, khong thay doi code

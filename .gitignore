@@ -1,0 +1,51 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+
+# C extensions
+*.so
+*.dll
+*.dylib
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local settings (khong commit)
+app_settings.json
+config/app_settings.json
+*.log
+
+# Temp files
+*.tmp
+*.bak
+*.cache/
+
+# Downloaded models
+models/
+*.pt
+*.pth
+*.onnx
+
+# OS
+Thumbs.db
+.DS_Store
