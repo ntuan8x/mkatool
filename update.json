@@ -1,5 +1,6 @@
 {
-  "latest_version": "1.1.0",
-  "google_file_id": "1A2b3C4d5E6f7G8h9I0j",
-  "changelog": "Sửa lỗi đồng bộ, nâng cấp hiệu năng và tối ưu hóa bộ nhớ."
+  "latest_version": "2.2.0",
+  "google_file_id": "1CbOtCl0368gqRnvEejx3f3doNTTu96EE",
+  "changelog": "Them kiem tra license bat buoc khi khoi dong. Dong goi PyQt6 hoan chinh.",
+  "sha256": "14C41D204C3005D432BD7DD6B37DCA52A645D12314ED6AF2E4F9F94E9259C8E6"
 }
