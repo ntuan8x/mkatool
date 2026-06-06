@@ -1,0 +1,103 @@
+#!/bin/bash
+# pre-commit hook: Kiem tra version truoc khi commit
+#
+# Bat buoc tat ca cac file sau phai dong nhat version:
+#   1. src/config/app_config.py -> VERSION = "x.x.x"
+#   2. update.json -> "latest_version": "x.x.x"
+#
+# Neu co thay doi code (.py), yeu cau tang version.
+#
+# Cach cai dat:
+#   cp scripts/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+cd "$ROOT_DIR"
+
+APP_CONFIG="src/config/app_config.py"
+UPDATE_JSON="update.json"
+CHANGELOG="CHANGELOG.md"
+
+# Lay version tu app_config.py
+get_version_config() {
+    grep 'VERSION = "' "$APP_CONFIG" | sed 's/.*VERSION = "\([0-9.]*\)".*/\1/'
+}
+
+# Lay version tu update.json
+get_version_json() {
+    python -c "import json; print(json.load(open('$UPDATE_JSON'))['latest_version'])"
+}
+
+# Kiem tra file ton tai
+check_files() {
+    if [ ! -f "$APP_CONFIG" ]; then
+        echo "[ERROR] $APP_CONFIG not found"
+        exit 1
+    fi
+    if [ ! -f "$UPDATE_JSON" ]; then
+        echo "[ERROR] $UPDATE_JSON not found"
+        exit 1
+    fi
+}
+
+check_files
+
+VERSION_CONFIG=$(get_version_config)
+VERSION_JSON=$(get_version_json)
+
+# Dong bo version giua 2 file
+if [ "$VERSION_CONFIG" != "$VERSION_JSON" ]; then
+    echo "[ERROR] Version mismatch!"
+    echo "  app_config.py: $VERSION_CONFIG"
+    echo "  update.json:   $VERSION_JSON"
+    echo ""
+    echo "Phai dong bo 2 file ve cung version."
+    exit 1
+fi
+
+# Kiem tra xem co code file nao thay doi khong
+CHANGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.py$' | grep -vE "^($APP_CONFIG|$UPDATE_JSON|__pycache__)" || true)
+
+if [ -n "$CHANGED_FILES" ]; then
+    echo ""
+    echo "[CODE CHANGES DETECTED]:"
+    echo "$CHANGED_FILES" | while read -r f; do echo "  - $f"; done
+    echo ""
+    echo "Version hien tai: $VERSION_CONFIG"
+    echo ""
+    echo "Ban co muon tang version?"
+    echo "  1. Tang PATCH  - Fix nho"
+    echo "  2. Tang MINOR - Tinh nang moi"
+    echo "  3. Tang MAJOR - Break change"
+    echo "  4. Bo qua     - Chi commit"
+    echo ""
+    echo -n "Chon [1-4]: "
+    read -r choice
+
+    case "$choice" in
+        1)
+            python scripts/bump_version.py patch
+            ;;
+        2)
+            python scripts/bump_version.py minor
+            ;;
+        3)
+            python scripts/bump_version.py major
+            ;;
+        4)
+            echo "Bo qua tang version."
+            ;;
+        *)
+            echo "Lua chon khong hop le."
+            exit 1
+            ;;
+    esac
+fi
+
+# Commit cac thay doi version (neu co)
+git add "$APP_CONFIG" "$UPDATE_JSON" "$CHANGELOG" 2>/dev/null || true
+
+echo ""
+echo "[OK] Pre-commit check passed!"
