@@ -99,6 +99,10 @@ def update_update_json(major: int, minor: int, patch: int):
 
     data["latest_version"] = version_str
 
+    # Luon giu lai truong sha256 neu co
+    if "sha256" not in data:
+        data["sha256"] = ""
+
     with open(UPDATE_JSON, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     print(f"  [OK] update.json: latest_version = {version_str}")
