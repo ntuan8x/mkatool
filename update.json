@@ -1,6 +1,6 @@
 {
   "latest_version": "2.6.0",
-   "google_file_id": "1atqG9YSVAF1hm82W5eM71lYNXCDqdYkW",
+   "google_file_id": "15bo5qQ1vPHZen4tLwtJK2istLB2Za2KL",
   "changelog": "Đã sửa lỗi JSON hỏng (2 khóa history), điền sẵn version + sha256, giữ history",
-  "sha256": "04dcb69737bfc8cfe465e129a65bd0f94716acbf8fe39c1c06179be187022139"
+  "sha256": "88b76f7c94074fa1ad8b490f13df537542a2acdcafb18500a2205315b9cfbfb0"
 }
