@@ -1,5 +1,5 @@
 {
-  "latest_version": "2.6.0",
+  "latest_version": "2.6.1",
    "google_file_id": "1HNo1UbjRSRJIaZpcLPMFPgHtAaaipY1N",
   "changelog": "Đã sửa lỗi JSON hỏng (2 khóa history), điền sẵn version + sha256, giữ history",
   "sha256": "57E4FD92BEAF9E751D72C5C10C4DCA0670B5170F190FEE9C8BC1E5DDB1D2C950"
