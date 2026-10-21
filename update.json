@@ -1,6 +1,6 @@
 {
-  "latest_version": "2.8.2",
-  "google_file_id": "1xLSECfabX1T2M04gXF61nptAGNnA6Hcg",
-  "changelog": "Sửa lỗi tự động giải nén và cập nhật online ở máy khách; Hỗ trợ cập nhật nhanh qua gói Patch nhẹ (~42 MB)",
-  "sha256": "74913cef158f3115121f3410e7819da4c6e035f6133a9e409d488a52e2c070ac"
+  "latest_version": "2.8.4",
+  "google_file_id": "1h-jAGZK8DXWSPDj67cOznMnTd9qUYEd8",
+  "changelog": "Bổ sung hướng dẫn sử dụng HTML, sửa lỗi tự động giải nén và hỗ trợ cập nhật nhanh qua gói Patch nhẹ (~42 MB)",
+  "sha256": "d173fe4458f459c3d1c0a0c48902b5e8afd2d3cd90d5ec31bb72820b76fdda29"
 }
