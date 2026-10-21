@@ -1,5 +1,5 @@
 {
-  "latest_version": "2.8.4",
+  "latest_version": "2.8.2",
   "google_file_id": "1xLSECfabX1T2M04gXF61nptAGNnA6Hcg",
   "changelog": "Sửa lỗi tự động giải nén và cập nhật online ở máy khách; Hỗ trợ cập nhật nhanh qua gói Patch nhẹ (~42 MB)",
   "sha256": "74913cef158f3115121f3410e7819da4c6e035f6133a9e409d488a52e2c070ac"
