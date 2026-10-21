@@ -1,6 +1,6 @@
 {
-  "latest_version": "2.8.0",
-   "google_file_id": "1t937tf24xbBAa8mPp01FGLJw0pVT4ggg",
-  "changelog": "Đã sửa lỗi JSON hỏng (2 khóa history), điền sẵn version + sha256, giữ history",
-  "sha256": "ce401017b7c592d3ee6b231bb75c14a70009e25c0b55dfe965178170d748bb6f"
+  "latest_version": "2.8.2",
+  "google_file_id": "1t937tf24xbBAa8mPp01FGLJw0pVT4ggg",
+  "changelog": "Sửa lỗi tự động giải nén và cập nhật online ở máy khách; Hỗ trợ cập nhật nhanh qua gói Patch nhẹ (~42 MB)",
+  "sha256": "4c3a1ace91483486e2c555d0e1c6b489488b22a33a961802a9c6eee2ccbe5d5e"
 }
