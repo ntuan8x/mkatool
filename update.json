@@ -1,6 +1,6 @@
 {
-  "latest_version": "2.8.4",
-  "google_file_id": "1h-jAGZK8DXWSPDj67cOznMnTd9qUYEd8",
+  "latest_version": "2.10.1",
+  "google_file_id": "1QIS7xsbESJ2mjXxNMkR2XenbioOqjm2l",
   "changelog": "Bổ sung hướng dẫn sử dụng HTML, sửa lỗi tự động giải nén và hỗ trợ cập nhật nhanh qua gói Patch nhẹ (~42 MB)",
-  "sha256": "d173fe4458f459c3d1c0a0c48902b5e8afd2d3cd90d5ec31bb72820b76fdda29"
+  "sha256": "b43e48d60e546fcdf4b3d7a61ce6e449db2b478dee4328c00a43847ab75e60dd"
 }
