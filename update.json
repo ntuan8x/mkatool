@@ -1,6 +1,6 @@
 {
-  "latest_version": "2.10.1",
-  "google_file_id": "1QIS7xsbESJ2mjXxNMkR2XenbioOqjm2l",
-  "changelog": "Bổ sung hướng dẫn sử dụng HTML, sửa lỗi tự động giải nén và hỗ trợ cập nhật nhanh qua gói Patch nhẹ (~42 MB)",
-  "sha256": "b43e48d60e546fcdf4b3d7a61ce6e449db2b478dee4328c00a43847ab75e60dd"
+  "latest_version": "2.13.0",
+  "google_file_id": "1051sTMTDLJ6cuXWRZH5nF8OC7q_lmVe_",
+  "changelog": "Nâng cấp tải bilibili theo danh mục",
+  "sha256": "96f3645b61c64ae6774dea47081a5de24f35836a6ac74621a08974382213d005"
 }
